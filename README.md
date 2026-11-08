@@ -4,7 +4,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 ![PowerShell 5.1 | 7](https://img.shields.io/badge/PowerShell-5.1%20%7C%207-blue)
 
-Back up the Power BI content of Microsoft Fabric workspaces as plain files you can open, diff and keep in Git. It's a single PowerShell script that uses the official [Fabric CLI](https://aka.ms/fabric-cli) (`fab`). For SQL Server Reporting Services, see [ssrs-report-export](https://github.com/uzuntasgokberk/ssrs-report-export).
+Back up the Power BI content of Microsoft Fabric workspaces as plain files you can open, diff and keep in Git. It's a single PowerShell script that uses the official [Fabric CLI](https://aka.ms/fabric-cli) (`fab`). For SQL Server Reporting Services and Power BI Report Server, see [ssrs-reportserver-export](https://github.com/uzuntasgokberk/ssrs-reportserver-export).
 
 | In Fabric | On disk |
 |---|---|
@@ -281,7 +281,7 @@ Use a **private** repository: TMDL and RDL files contain server and database nam
 
 ## Related projects
 
-- [ssrs-report-export](https://github.com/uzuntasgokberk/ssrs-report-export): the same idea for SQL Server Reporting Services. It exports reports, shared data sources, shared datasets and report parts through the SSRS REST API.
+- [ssrs-reportserver-export](https://github.com/uzuntasgokberk/ssrs-reportserver-export): the same idea for SQL Server Reporting Services and Power BI Report Server. It exports reports, shared data sources, shared datasets, report parts and Power BI reports (`.pbix`) through the report server REST API.
 
 ## Contributing
 
