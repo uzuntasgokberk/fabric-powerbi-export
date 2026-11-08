@@ -1,0 +1,22 @@
+# Default export folder of Export-FabricPowerBI.ps1 (keep exports in a separate repository)
+export/
+
+# Logs
+*.log
+
+# Secrets
+.env
+.env.*
+*.pfx
+*.pem
+*.key
+
+# Editors and OS files
+.vs/
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+Thumbs.db
+desktop.ini
+.DS_Store

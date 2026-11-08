@@ -1,0 +1,27 @@
+# .gitignore for a repository that stores the output of Export-FabricPowerBI.ps1.
+# Copy this file to the root of your export folder.
+
+# Power BI Desktop: cached model data (contains real data and can be large).
+**/.pbi/cache.abf
+*.abf
+
+# Power BI Desktop: per-user settings.
+**/.pbi/localSettings.json
+
+# Binary reports contain data; the PBIP folders are the source of truth.
+*.pbix
+
+# Export logs (one log and CSV per run).
+_logs/
+
+# Secrets
+.env
+.env.*
+*.pfx
+*.pem
+*.key
+
+# OS files
+Thumbs.db
+desktop.ini
+.DS_Store

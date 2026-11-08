@@ -1,0 +1,36 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Parse with Windows PowerShell 5.1
+        shell: powershell
+        run: |
+          $tokens = $null; $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("$PWD\Export-FabricPowerBI.ps1", [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors) { $errors | ForEach-Object { Write-Error "Line $($_.Extent.StartLineNumber): $($_.Message)" }; exit 1 }
+          "No parse errors."
+
+      - name: Parse with PowerShell 7
+        shell: pwsh
+        run: |
+          $tokens = $null; $errors = $null
+          [System.Management.Automation.Language.Parser]::ParseFile("$PWD/Export-FabricPowerBI.ps1", [ref]$tokens, [ref]$errors) | Out-Null
+          if ($errors) { $errors | ForEach-Object { Write-Error "Line $($_.Extent.StartLineNumber): $($_.Message)" }; exit 1 }
+          "No parse errors."
+
+      - name: PSScriptAnalyzer
+        shell: pwsh
+        run: |
+          Install-Module PSScriptAnalyzer -Scope CurrentUser -Force
+          $results = @(Invoke-ScriptAnalyzer -Path . -Recurse -Settings ./PSScriptAnalyzerSettings.psd1)
+          $results | Format-Table -AutoSize
+          if ($results.Count -gt 0) { exit 1 }
+          "No findings."

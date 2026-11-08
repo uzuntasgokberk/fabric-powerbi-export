@@ -1,0 +1,24 @@
+# .gitattributes for a repository that stores the output of Export-FabricPowerBI.ps1.
+# Copy this file to the root of your export folder.
+
+# Line endings: Git stores text with LF and checks the Power BI files out with CRLF.
+# The Fabric service returns LF and Power BI Desktop saves CRLF; with these rules a diff
+# shows only real changes, never whole files whose line endings changed.
+* text=auto
+
+*.tmdl    text eol=crlf
+*.pbip    text eol=crlf
+*.pbir    text eol=crlf
+*.pbism   text eol=crlf
+*.dax     text eol=crlf
+*.rdl     text eol=crlf
+.platform text eol=crlf
+**/*.Report/**/*.json        text eol=crlf
+**/*.SemanticModel/**/*.json text eol=crlf
+
+*.pbix binary
+*.abf  binary
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
