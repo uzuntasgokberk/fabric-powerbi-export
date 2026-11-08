@@ -21,7 +21,8 @@
     so a failed download never destroys the last good export.
 
 .PARAMETER Workspace
-    One or more workspace names, as shown by "fab ls" (the ".Workspace" suffix is optional).
+    One or more workspace names, as shown by "fab ls" (the ".Workspace" / ".Personal" suffix is
+    optional). "My workspace" exports the personal workspace.
 
 .PARAMETER Name
     Only export items with these names. Wildcards are allowed, e.g. "Sales*".
@@ -631,13 +632,25 @@ function Export-Item([string]$Location, [string]$WorkspaceId, $Item, [string]$Ta
     }
 }
 
+function Get-WorkspaceId([string]$WorkspaceName, [string[]]$Suffixes) {
+    # "fab ls" shows shared workspaces as "<Name>.Workspace" and the personal one as "My workspace.Personal".
+    # Without a suffix, a shared workspace is tried first, then the personal workspace.
+    $Errors = @()
+    foreach ($Suffix in $Suffixes) {
+        try   { return (Invoke-FabRetry @("get", "$WorkspaceName$Suffix", "-q", "id", "--output_format", "text")).Trim() }
+        catch [System.Net.WebException] { throw }
+        catch { $Errors += $_.Exception.Message }
+    }
+    throw "Workspace not found or no access. Compare the name with the output of 'fab ls'. Details: $($Errors -join ' | ')"
+}
+
 function Get-IncludedFolder([string]$WorkspaceName) {
     # "Workspace/Folder" entries for this workspace (explicit) and plain "Folder" entries (any workspace).
     $Folders = @()
     foreach ($Entry in $IncludeFolder) {
         $Parts = $Entry -split '/', 2
         if ($Parts.Count -eq 2) {
-            if ($Parts[0].Trim() -eq $WorkspaceName) { $Folders += @{ Name = $Parts[1].Trim(); Explicit = $true } }
+            if (($Parts[0].Trim() -replace '\.(Workspace|Personal)$', '') -eq $WorkspaceName) { $Folders += @{ Name = $Parts[1].Trim(); Explicit = $true } }
         }
         elseif ($Entry.Trim()) {
             $Folders += @{ Name = $Entry.Trim(); Explicit = $false }
@@ -683,16 +696,16 @@ $Excludes      = @($Exclude | Where-Object { $_ })
 if (-not $IncludeUsageMetrics) { $Excludes += $UsageMetricsItems }
 
 foreach ($WorkspaceName in $Workspace) {
-    $WorkspaceName   = $WorkspaceName -replace '\.Workspace$', ''
+    $Suffixes = @(".Workspace", ".Personal")
+    if ($WorkspaceName -match '\.(Workspace|Personal)$') { $Suffixes = @(".$($Matches[1])") }
+    $WorkspaceName   = $WorkspaceName -replace '\.(Workspace|Personal)$', ''
     $WorkspaceFolder = Join-Path $ExportRoot (Get-SafeFileName $WorkspaceName)
     $WorkspaceId     = $null
     Write-ExportLog "------------------------------------------------------------"
     Write-ExportLog "Workspace: $WorkspaceName"
 
     try {
-        try   { $WorkspaceId = (Invoke-FabRetry @("get", "$WorkspaceName.Workspace", "-q", "id", "--output_format", "text")).Trim() }
-        catch [System.Net.WebException] { throw }
-        catch { throw "Workspace not found or no access. Compare the name with the output of 'fab ls'. Details: $($_.Exception.Message)" }
+        $WorkspaceId = Get-WorkspaceId $WorkspaceName $Suffixes
         if ($WorkspaceId -notmatch '^[0-9a-fA-F-]{36}$') { throw "Unexpected workspace ID: '$WorkspaceId'" }
         Write-ExportLog "Workspace ID: $WorkspaceId"
 
@@ -778,7 +791,13 @@ if ($Name -and $SelectedTotal -eq 0) {
     exit 1
 }
 
-if ($List) { exit 0 }
+$Failed = @($Results | Where-Object Status -eq "Failed")
+
+# A workspace or folder that could not be listed is a failure in a dry run too.
+if ($List) {
+    if ($Failed.Count -gt 0) { exit 1 }
+    exit 0
+}
 
 if ($Results.Count -gt 0) {
     # UTF-8 with BOM so Excel shows non-ASCII characters correctly ("UTF8" has no BOM in PowerShell 7).
@@ -786,7 +805,6 @@ if ($Results.Count -gt 0) {
     $Results | Export-Csv -LiteralPath $CsvFile -NoTypeInformation -Encoding $CsvEncoding
 }
 
-$Failed   = @($Results | Where-Object Status -eq "Failed")
 $Warnings = @($Results | Where-Object { $_.Status -eq "Success" -and $_.Message -like "WARNING:*" })
 
 Write-ExportLog "============================================================"

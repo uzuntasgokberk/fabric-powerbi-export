@@ -105,7 +105,7 @@ All settings: `fab config ls`. Documentation: <https://aka.ms/fabric-cli>.
 
 | Parameter | Description | Default |
 |---|---|---|
-| `-Workspace` | One or more workspace names, as shown by `fab ls`. The `.Workspace` suffix is optional. | *required* |
+| `-Workspace` | One or more workspace names, as shown by `fab ls`. The `.Workspace` / `.Personal` suffix is optional; `"My workspace"` exports your personal workspace. | *required* |
 | `-Name` | Only items with these names. Wildcards allowed, e.g. `"Sales*"`. | all items |
 | `-Exclude` | Skip items with these names. Wildcards allowed. | — |
 | `-Type` | `Report`, `PaginatedReport`, `SemanticModel` | all three |
@@ -138,7 +138,7 @@ All settings: `fab config ls`. Documentation: <https://aka.ms/fabric-cli>.
 | Code | Meaning |
 |---|---|
 | `0` | All selected items were exported |
-| `1` | At least one item, folder or workspace failed (see the log), or `-Name` matched nothing |
+| `1` | At least one item, folder or workspace failed (see the log), or `-Name` matched nothing. Also with `-List` |
 | `2` | Could not start: `fab` was not found or you are not signed in |
 
 ## How it works
