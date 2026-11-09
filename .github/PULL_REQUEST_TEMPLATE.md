@@ -1,0 +1,1 @@
+Pull requests are by invitation (open an issue first, CONTRIBUTING.md); before opening one, run the parse check in PowerShell 5.1 and 7 and PSScriptAnalyzer (CONTRIBUTING.md), add a line to `CHANGELOG.md` under `[Unreleased]`, and link the issue here.

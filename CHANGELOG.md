@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - `-List` now returns exit code `1` when a workspace or an `-IncludeFolder` folder could not be listed (it returned `0`).
 - `-Workspace "My workspace"` (or `"My workspace.Personal"`) exports the personal workspace; the script used to look only for `<Name>.Workspace`.
 
+### Documentation
+
+- `SECURITY.md`: how to report a vulnerability privately. `CONTRIBUTING.md`: issues first, pull requests by invitation, and the checks to run.
+
 ## [1.0.0] - 2026-10-22
 
 ### Added
