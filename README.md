@@ -75,11 +75,13 @@ cd fabric-powerbi-export
 .\Export-FabricPowerBI.ps1 -Workspace "Sales Analytics"            # export to .\export
 ```
 
+Instead of cloning, you can download `Export-FabricPowerBI.ps1` from the [latest release](https://github.com/uzuntasgokberk/fabric-powerbi-export/releases/latest) and compare `Get-FileHash .\Export-FabricPowerBI.ps1` with the SHA256 in the release notes. A release is a version tested against Fabric; `main` has the newest changes.
+
 If PowerShell refuses to run the script ("running scripts is disabled on this system"), allow local scripts for your user once:
 
 ```powershell
 Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-Unblock-File .\Export-FabricPowerBI.ps1      # only needed if the file was downloaded as a ZIP
+Unblock-File .\Export-FabricPowerBI.ps1      # only needed if the file was downloaded in a browser (release or ZIP)
 ```
 
 or start it with `powershell.exe -ExecutionPolicy Bypass -File .\Export-FabricPowerBI.ps1 ...`.
